@@ -5,7 +5,7 @@ import { CountriesEditorComponent } from './countries-editor/countries-editor.co
 
 const routes: Routes = [
   { path: 'editor/users', component: UsersEditorComponent },
-  { path: 'editor/coutries', component: CountriesEditorComponent },
+  { path: 'editor/countries', component: CountriesEditorComponent },
 ];
 
 @NgModule({

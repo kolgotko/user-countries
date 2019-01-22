@@ -1,3 +1,25 @@
-<p>
-  countries-editor works!
-</p>
+<mat-toolbar>
+  <h2>Existing countries</h2>
+</mat-toolbar>
+<mat-list>
+  <ng-container *ngFor="let country of countries$ | async">
+    <mat-list-item>
+      <app-country-editor [country]="country"></app-country-editor>
+      <button mat-raised-button (click)="deleteCountry(country.id)" color="accent">delete</button>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </ng-container>
+</mat-list>
+
+<mat-toolbar>
+  <h2>New country</h2>
+</mat-toolbar>
+<form [formGroup]="newCountryForm" (ngSubmit)="onSubmitNewCountry()">
+
+  <mat-form-field>
+    <input type="text" formControlName="name" placeholder="Name" matInput />
+  </mat-form-field>
+
+  <button mat-raised-button color="primary">create</button>
+
+</form>

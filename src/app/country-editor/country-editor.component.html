@@ -1,3 +1,13 @@
-<p>
-  country-editor works!
-</p>
+<ng-container *ngIf="show; else info">
+
+  <mat-form-field>
+    <input type="text" [formControl]="nameFormControl" matInput />
+  </mat-form-field>
+  <button mat-button color="primary" (click)="onSave()"> save </button>
+  <button mat-button color="accent" (click)="show=false"> cancel </button>
+
+</ng-container>
+<ng-template #info>
+  {{ country.name }}
+  <button mat-button color="primary" (click)="show=true"> edit </button>
+</ng-template>
