@@ -1,0 +1,36 @@
+<mat-toolbar>
+  <h2>Existing users</h2>
+</mat-toolbar>
+<mat-list  *ngIf="this.users$ | async; else preloader">
+  <ng-container *ngFor="let user of this.users$ | async">
+    <mat-list-item>
+      <app-user-editor [user]="user"></app-user-editor>
+      <button class="button" (click)="onDeleteUser(user.id)"
+        mat-raised-button color="accent">delete</button>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </ng-container>
+</mat-list>
+
+<form class="form-base" [formGroup]="newUserForm" (ngSubmit)="onSubmitNewUser()">
+
+  <mat-toolbar>
+    <h2 class="form-base__row form-base__title">New user form</h2>
+  </mat-toolbar>
+
+  <div class="form-base__row">
+    <mat-form-field>
+      <input class="form-base__input" matInput placeholder="Name" type="text"
+        formControlName="name" />
+    </mat-form-field>
+  </div>
+
+  <div class="form-base__row">
+    <button class="button" mat-raised-button color="primary">create</button>
+  </div>
+
+</form>
+
+<ng-template #preloader>
+  <mat-progress-bar mode="query"></mat-progress-bar>
+</ng-template>

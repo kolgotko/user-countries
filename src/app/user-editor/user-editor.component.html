@@ -1,0 +1,11 @@
+<ng-container *ngIf="show; else info">
+  <mat-form-field>
+    <input type="text" matInput [formControl]="nameFormControl"/>
+  </mat-form-field>
+  <button class="button" (click)="onSaveUser()" mat-button color="primary">save</button>
+  <button class="button" (click)="show=false" mat-button color="accent">cancel</button>
+</ng-container>
+<ng-template #info>
+  {{ user.name }}
+  <button class="button" (click)="show=true" mat-button color="primary">edit</button>
+</ng-template>

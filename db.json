@@ -1,0 +1,57 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "first user"
+    },
+    {
+      "id": 2,
+      "name": "second user"
+    },
+    {
+      "id": 3,
+      "name": "third user"
+    },
+    {
+      "name": "13123123123123",
+      "id": 4
+    }
+  ],
+  "countries": [
+    {
+      "id": 1,
+      "name": "first country"
+    },
+    {
+      "id": 1,
+      "name": "second country"
+    },
+    {
+      "id": 1,
+      "name": "third country"
+    }
+  ],
+  "user-countries": [
+    {
+      "id": 2,
+      "userId": 1,
+      "countryId": 1,
+      "visited": true,
+      "hasVisa": false
+    },
+    {
+      "id": 3,
+      "userId": 1,
+      "countryId": 1,
+      "visited": false,
+      "hasVisa": true
+    },
+    {
+      "id": 4,
+      "userId": 1,
+      "countryId": 1,
+      "visited": false,
+      "hasVisa": false
+    }
+  ]
+}
