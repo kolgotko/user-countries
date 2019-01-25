@@ -1,1 +1,9 @@
+<nav mat-tab-nav-bar>
+  <a *ngFor="let menuItem of menu"
+    mat-tab-link
+    routerLinkActive #rla="routerLinkActive"
+    [routerLinkActiveOptions]="{exact: true}"
+    [active]="rla.isActive"
+    [routerLink]="menuItem.link"> {{ menuItem.label }} </a>
+</nav>
 <router-outlet></router-outlet>

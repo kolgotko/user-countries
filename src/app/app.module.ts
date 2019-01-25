@@ -12,6 +12,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -20,6 +25,10 @@ import { UsersEditorComponent } from './users-editor/users-editor.component';
 import { UserEditorComponent } from './user-editor/user-editor.component';
 import { CountriesEditorComponent } from './countries-editor/countries-editor.component';
 import { CountryEditorComponent } from './country-editor/country-editor.component';
+import { UserCountriesComponent } from './user-countries/user-countries.component';
+import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
+import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -28,6 +37,7 @@ import { CountryEditorComponent } from './country-editor/country-editor.componen
     UserEditorComponent,
     CountriesEditorComponent,
     CountryEditorComponent,
+    UserCountriesComponent,
   ],
   imports: [
     BrowserModule,
@@ -44,6 +54,12 @@ import { CountryEditorComponent } from './country-editor/country-editor.componen
     MatSnackBarModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
+    MatTabsModule,
+    MatAutocompleteModule,
+    MatSelectModule,
+    MatTableModule,
+    MatCheckboxModule,
+    ...(environment.production ?  [] : [ AkitaNgDevtools.forRoot(), AkitaNgRouterStoreModule.forRoot() ]),
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,0 +1,77 @@
+<mat-toolbar>
+  <h2>Search user countries</h2>
+</mat-toolbar>
+<form [formGroup]="searchForm" (ngSubmit)="onSubmitSearchForm()">
+  <br/>
+  <mat-form-field>
+    <input type="text" matInput placeholder="User"
+      formControlName="userName" [matAutocomplete]="usersCompletion">
+  </mat-form-field>
+  &nbsp;
+  <mat-form-field>
+    <input type="text" matInput placeholder="Country"
+      formControlName="countryName" [matAutocomplete]="countriesCompletion">
+  </mat-form-field>
+  &nbsp;
+  <mat-form-field>
+    <mat-select placeholder="Visit" formControlName="visited">
+      <mat-option [value]="binOptions['any']"> any </mat-option>
+      <mat-option [value]="binOptions['yes']"> yes </mat-option>
+      <mat-option [value]="binOptions['no']"> no </mat-option>
+    </mat-select>
+  </mat-form-field>
+  &nbsp;
+  <mat-form-field>
+    <mat-select placeholder="Has visa" formControlName="hasVisa">
+      <mat-option [value]="binOptions['any']"> any </mat-option>
+      <mat-option [value]="binOptions['yes']"> yes </mat-option>
+      <mat-option [value]="binOptions['no']"> no </mat-option>
+    </mat-select>
+  </mat-form-field>
+  &nbsp;
+  <button mat-raised-button color="primary">show</button>
+
+  <mat-autocomplete #usersCompletion>
+    <mat-option *ngFor="let user of users$ | async" [value]="user.name">
+      {{ user.name }}
+    </mat-option>
+  </mat-autocomplete>
+
+  <mat-autocomplete #countriesCompletion>
+    <mat-option value=""></mat-option>
+    <mat-option *ngFor="let country of countries$ | async" [value]="country.name">
+      {{ country.name }}
+    </mat-option>
+  </mat-autocomplete>
+</form>
+
+<mat-toolbar>
+  <h2>Search results</h2>
+</mat-toolbar>
+
+<form [formGroup]="searchResultForm" (ngSubmit)="saveChanges()">
+
+  <table>
+
+    <tr>
+      <th>User</th>
+      <th>Country</th>
+      <th>Visit</th>
+      <th>Has visa</th>
+    </tr>
+
+    <tr *ngFor="let row of searchResult; let i=index" >
+      <td>{{ row.user.name }}</td>
+      <td>{{ row.country.name }}</td>
+      <td formArrayName="visited">
+        <mat-checkbox [formControlName]="i"></mat-checkbox>
+      </td>
+      <td formArrayName="hasVisa">
+        <mat-checkbox [formControlName]="i"></mat-checkbox>
+      </td>
+    </tr>
+
+  </table>
+
+  <button mat-raised-button color="primary">save</button>
+</form>
