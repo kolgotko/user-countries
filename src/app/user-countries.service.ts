@@ -2,7 +2,7 @@ import { environment } from '../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { UserCountriesQuery } from './user-countries.query';
 import { UserCountriesStore } from './user-countries.store';
 import { UserCountryInterface } from './interfaces/user-coutry.interface';
@@ -32,10 +32,7 @@ export class UserCountriesService {
 
     }).pipe(
       switchMap(_ => this.getAllUserCountries()),
-      switchMap(userCountries => {
-        this.userCountriesStore.set(userCountries);
-        return of(null);
-      })
+      map(userCountries => this.userCountriesStore.set(userCountries))
     );
 
   }
@@ -44,10 +41,7 @@ export class UserCountriesService {
 
     return this.createUserCountry(data)
     .pipe(
-      switchMap(newUserCountry => {
-        this.userCountriesStore.add(newUserCountry);
-        return of(null);
-      })
+      map(newUserCountry => this.userCountriesStore.add(newUserCountry))
     );
 
   }
@@ -56,9 +50,8 @@ export class UserCountriesService {
 
     return this.http.put<UserCountryInterface>(`${this.url}/${data.id}`, data)
       .pipe(
-        switchMap(newUserCountry => {
-          this.userCountriesStore.update(newUserCountry.id, newUserCountry);
-          return of(null);
+        map(newUserCountry => {
+          return this.userCountriesStore.update(newUserCountry.id, newUserCountry);
         })
       );
 

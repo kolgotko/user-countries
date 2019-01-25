@@ -5,7 +5,7 @@ import { CountryInterface } from './interfaces/country.interface';
 import { CountriesQuery } from './countries.query';
 import { CountriesStore } from './countries.store';
 import { Observable, of } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class CountriesService {
     private countriesStore: CountriesStore,
   ) { }
 
-  loadAllCountries(): Observable<null> {
+  loadAllCountries(): Observable<any> {
 
     return Observable.create(observer => {
 
@@ -32,10 +32,7 @@ export class CountriesService {
 
     }).pipe(
       switchMap(_ => this.getAllCountries()),
-      switchMap(countries => {
-        this.countriesStore.set(countries);
-        return of(null);
-      })
+      map(countries => this.countriesStore.set(countries))
     );
 
   }
@@ -49,14 +46,11 @@ export class CountriesService {
 
   }
 
-  addCountry(country: CountryInterface): Observable<null> {
+  addCountry(country: CountryInterface): Observable<any> {
 
     return this.createCountry(country)
       .pipe(
-        switchMap(newCountry => {
-          this.countriesStore.add(newCountry);
-          return of(null);
-        })
+        map(newCountry => this.countriesStore.add(newCountry))
       );
 
   }
@@ -83,10 +77,7 @@ export class CountriesService {
 
     return this.http.put<CountryInterface>(`${this.url}/${country.id}`, country)
       .pipe(
-        switchMap(newCountry => {
-          this.countriesStore.update(newCountry.id, newCountry);
-          return of(null);
-        })
+        map(newCountry => this.countriesStore.update(newCountry.id, newCountry))
       );
 
   }

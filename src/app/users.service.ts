@@ -8,7 +8,7 @@ import {
   Observable, Observer, of, throwError, EMPTY
 } from 'rxjs';
 import {
-  tap, switchMap, catchError, takeWhile
+  tap, switchMap, catchError, takeWhile, map
 } from 'rxjs/operators';
 
 @Injectable({
@@ -36,22 +36,16 @@ export class UsersService {
 
     }).pipe(
       switchMap(_ => this.getAllUsers()),
-      switchMap(users => {
-        this.usersStore.set(users);
-        return of(null);
-      })
+      map(users => this.usersStore.set(users))
     );
 
   }
 
-  addUser(user: UserInterface): Observable<null> {
+  addUser(user: UserInterface): Observable<any> {
 
     return this.createUser(user)
       .pipe(
-        switchMap(newUser => {
-          this.usersStore.add(newUser);
-          return of(null);
-        })
+        map(newUser => this.usersStore.add(newUser))
       );
 
   }
@@ -87,10 +81,7 @@ export class UsersService {
 
     return this.http.put<UserInterface>(`${this.url}/${user.id}`, user)
       .pipe(
-        switchMap(newUser => {
-          this.usersStore.update(newUser.id, newUser);
-          return of(null);
-        })
+        map(newUser => this.usersStore.update(newUser.id, newUser))
       );
 
   }
