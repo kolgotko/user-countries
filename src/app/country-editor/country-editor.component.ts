@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy, Input, Output } from '@angular/core';
 import { CountryInterface } from '../interfaces/country.interface';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { CountriesService } from '../countries.service';
+import { MatSnackBar } from '@angular/material';
 import { untilDestroyed } from 'ngx-take-until-destroy';
 import { switchMap } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material';
+import { CountriesService } from '../countries.service';
+import { CountriesQuery } from '../countries.query';
 
 @Component({
   selector: 'app-country-editor',
@@ -21,6 +22,7 @@ export class CountryEditorComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private countriesService: CountriesService,
     private snackBar: MatSnackBar,
+    private countriesQuery: CountriesQuery,
   ) { }
 
   ngOnInit() {
@@ -46,7 +48,7 @@ export class CountryEditorComponent implements OnInit, OnDestroy {
 
     this.countriesService.updateCountry(data)
       .pipe(
-        switchMap(_ => this.loadCountry(data.id)),
+        switchMap(_ => this.countriesQuery.selectEntity(data.id)),
         untilDestroyed(this)
       )
       .subscribe(country => {

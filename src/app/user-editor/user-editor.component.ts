@@ -2,10 +2,11 @@ import { Component, OnInit, OnDestroy, Input, Output } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { untilDestroyed } from 'ngx-take-until-destroy';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { UserInterface } from '../interfaces/user.interface';
-import { UsersService } from '../users.service';
 import { switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { UserInterface } from '../interfaces/user.interface';
+import { UsersService } from '../users.service';
+import { UsersQuery } from '../users.query';
 
 @Component({
   selector: 'app-user-editor',
@@ -22,17 +23,12 @@ export class UserEditorComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
+    private usersQuery: UsersQuery,
   ) { }
 
   ngOnInit() {
 
     this.nameFormControl = this.fb.control(this.user.name, Validators.required);
-
-  }
-
-  loadUser(): Observable<UserInterface> {
-
-    return this.usersService.getUserById(this.user.id);
 
   }
 
@@ -45,7 +41,7 @@ export class UserEditorComponent implements OnInit, OnDestroy {
 
     this.usersService.updateUser(data)
       .pipe(
-        switchMap(_ => this.loadUser()),
+        switchMap(_ => this.usersQuery.selectEntity(data.id)),
         untilDestroyed(this),
       )
       .subscribe(user => {

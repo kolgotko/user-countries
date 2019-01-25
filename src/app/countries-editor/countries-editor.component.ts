@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { untilDestroyed } from 'ngx-take-until-destroy';
-import { CountryInterface } from '../interfaces/country.interface';
-import { CountriesService } from '../countries.service';
 import { Observable } from 'rxjs';
 import { switchAll } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
+import { CountryInterface } from '../interfaces/country.interface';
+import { CountriesService } from '../countries.service';
+import { CountriesQuery } from '../countries.query';
 
 @Component({
   selector: 'app-countries-editor',
@@ -20,13 +21,15 @@ export class CountriesEditorComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
-    private countriesService: CountriesService
+    private countriesService: CountriesService,
+    private countriesQuery: CountriesQuery,
   ) { }
 
   ngOnInit() {
 
     this.initNewCountryForm();
-    this.countries$ = this.loadCountries();
+    this.loadCountries();
+    this.countries$ = this.countriesQuery.countries$;
 
   }
 
@@ -38,9 +41,16 @@ export class CountriesEditorComponent implements OnInit, OnDestroy {
 
   }
 
-  loadCountries(): Observable<CountryInterface[]> {
+  loadCountries() {
 
-    return this.countriesService.getAllCountries();
+    this.countriesService.loadAllCountries()
+      .subscribe(null, error => {
+        this.snackBar.open(
+          `Error loading countries. Details: ${error.message}`,
+          null,
+          { duration: 3000 }
+        );
+      });
 
   }
 
@@ -58,11 +68,10 @@ export class CountriesEditorComponent implements OnInit, OnDestroy {
       ...this.newCountryForm.value,
     };
 
-    this.countriesService.createCountry(data)
+    this.countriesService.addCountry(data)
       .pipe(untilDestroyed(this))
       .subscribe(_ => {
 
-        this.countries$ = this.loadCountries();
         this.newCountryForm.reset();
 
         this.snackBar.open('country created!', null, {
@@ -83,11 +92,9 @@ export class CountriesEditorComponent implements OnInit, OnDestroy {
 
   deleteCountry(id: number) {
 
-    this.countriesService.deleteCountry(id)
+    this.countriesService.removeCountry(id)
       .pipe(untilDestroyed(this))
       .subscribe(_ => {
-
-        this.countries$ = this.loadCountries();
 
         this.snackBar.open(
           'country deleted.',

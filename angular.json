@@ -137,5 +137,8 @@
       }
     }
   },
-  "defaultProject": "user-countries"
+  "defaultProject": "user-countries",
+  "cli": {
+    "defaultCollection": "akita-schematics"
+  }
 }

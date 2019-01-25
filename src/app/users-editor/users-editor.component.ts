@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
-import { UsersService } from '../users.service';
-import { UserInterface } from '../interfaces/user.interface';
-import { untilDestroyed } from 'ngx-take-until-destroy';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry, retryWhen } from 'rxjs/operators';
+import { UsersService } from '../users.service';
+import { UserInterface } from '../interfaces/user.interface';
+import { untilDestroyed } from 'ngx-take-until-destroy';
+import { UsersQuery } from '../users.query';
 
 @Component({
   selector: 'app-users-editor',
@@ -21,22 +22,23 @@ export class UsersEditorComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
+    private usersQuery: UsersQuery,
   ) { }
 
   ngOnInit() {
 
     this.initNewUserForm();
-    this.users$ = this.loadAllUsers();
+    this.loadAllUsers();
+    this.users$ = this.usersQuery.users$;
 
   }
 
-  loadAllUsers(): Observable<UserInterface[]> {
+  loadAllUsers() {
 
-    return this.usersService.getAllUsers()
-      .pipe(catchError(error => {
+    this.usersService.loadAllUsers()
+      .subscribe(null, error => {
         this.snackBar.open(`Error loading users. Details: ${error.message}`);
-        return throwError(error);
-      }));
+      });
 
   }
 
@@ -61,11 +63,10 @@ export class UsersEditorComponent implements OnInit, OnDestroy {
       ...this.newUserForm.value,
     };
 
-    this.usersService.createUser(data)
+    this.usersService.addUser(data)
       .pipe(untilDestroyed(this))
       .subscribe(_ => {
 
-        this.users$ = this.loadAllUsers();
         this.newUserForm.reset();
 
         this.snackBar.open(
@@ -88,12 +89,10 @@ export class UsersEditorComponent implements OnInit, OnDestroy {
 
   onDeleteUser(id: number) {
 
-    console.log(id);
-    this.usersService.deleteUser(id)
+    this.usersService.removeUser(id)
       .pipe(untilDestroyed(this))
       .subscribe(_ => {
 
-        this.users$ = this.loadAllUsers();
         this.snackBar.open(
           `user deleted!`,
           null,

@@ -13,30 +13,30 @@
       "name": "third user"
     },
     {
-      "name": "13123123123123",
-      "id": 4
+      "id": 4,
+      "name": "1231313123"
+    },
+    {
+      "id": 5,
+      "name": "11111111112"
     }
   ],
   "countries": [
     {
       "id": 1,
-      "name": "third country"
+      "name": "first country"
     },
     {
-      "id": 1,
+      "id": 2,
       "name": "second country"
     },
     {
-      "id": 1,
+      "id": 3,
       "name": "third country"
     },
     {
-      "name": "123123123123",
-      "id": 2
-    },
-    {
-      "name": "13131313123",
-      "id": 3
+      "id": 4,
+      "name": "1312454546"
     }
   ],
   "user-countries": [
@@ -50,14 +50,14 @@
     {
       "id": 3,
       "userId": 1,
-      "countryId": 1,
+      "countryId": 2,
       "visited": false,
       "hasVisa": true
     },
     {
       "id": 4,
       "userId": 1,
-      "countryId": 1,
+      "countryId": 3,
       "visited": false,
       "hasVisa": false
     }

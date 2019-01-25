@@ -15,19 +15,15 @@
 <form class="form-base" [formGroup]="newUserForm" (ngSubmit)="onSubmitNewUser()">
 
   <mat-toolbar>
-    <h2 class="form-base__row form-base__title">New user form</h2>
+    <h2 class="form-base__row form-base__title">New user</h2>
   </mat-toolbar>
 
-  <div class="form-base__row">
-    <mat-form-field>
-      <input class="form-base__input" matInput placeholder="Name" type="text"
-        formControlName="name" />
-    </mat-form-field>
-  </div>
+  <mat-form-field>
+    <input class="form-base__input" matInput placeholder="Name" type="text"
+      formControlName="name" />
+  </mat-form-field>
 
-  <div class="form-base__row">
-    <button class="button" mat-raised-button color="primary">create</button>
-  </div>
+  <button class="button" mat-raised-button color="primary">create</button>
 
 </form>
 

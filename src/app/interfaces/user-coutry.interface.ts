@@ -1,7 +1,7 @@
 export interface UserCountryInterface {
   id: number;
   userId: number;
-  countriyId: number;
+  countryId: number;
   visited: boolean;
   hasVisa: boolean;
 }
