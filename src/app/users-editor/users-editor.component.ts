@@ -36,6 +36,7 @@ export class UsersEditorComponent implements OnInit, OnDestroy {
   loadAllUsers() {
 
     this.usersService.loadAllUsers()
+      .pipe(untilDestroyed(this))
       .subscribe(null, error => {
         this.snackBar.open(`Error loading users. Details: ${error.message}`);
       });

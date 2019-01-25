@@ -81,6 +81,7 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
   loadUserCoutries() {
 
     this.userCountriesService.loadAllUserCountries()
+      .pipe(untilDestroyed(this))
       .subscribe(null, error => {
         this.snackBar.open(
           `Error loading users. Details: ${error.message}`,
@@ -132,6 +133,7 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
     const userCountries$ = this.userCountriesQuery.selectAll();
 
     combineLatest(user$, userCountries$, users$, countries$)
+      .pipe(untilDestroyed(this))
       .subscribe(([user, userCountries, users, countries]) => {
 
         // O(n)

@@ -44,6 +44,7 @@ export class CountriesEditorComponent implements OnInit, OnDestroy {
   loadCountries() {
 
     this.countriesService.loadAllCountries()
+      .pipe(untilDestroyed(this))
       .subscribe(null, error => {
         this.snackBar.open(
           `Error loading countries. Details: ${error.message}`,
