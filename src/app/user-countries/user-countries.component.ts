@@ -11,6 +11,7 @@ import { CountriesQuery } from '../countries.query';
 import { UserCountriesService } from '../user-countries.service';
 import { UserCountriesQuery } from '../user-countries.query';
 import { UserCountryInterface } from '../interfaces/user-coutry.interface';
+import { SearchResultInterface } from '../interfaces/search-result.interface';
 import { Observable, of, combineLatest  } from 'rxjs';
 import { switchMap, map, pluck } from 'rxjs/operators';
 
@@ -25,7 +26,7 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
   countries$: Observable<CountryInterface[]>;
   userCountries$: Observable<UserCountryInterface[]>;
   searchForm: FormGroup;
-  searchResult: Object[] = [];
+  searchResult: SearchResultInterface[] = [];
   searchResultForm: FormGroup;
 
   readonly binOptions = {
@@ -141,10 +142,11 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
         const forAllCountries = countries.map(country => {
 
           const ret = {
-            country: country,
-            user: user,
+            country,
+            user,
             visited: false,
             hasVisa: false,
+            userCountryId: 0,
           };
 
           indexes[country.id] = ret;
@@ -155,11 +157,14 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
         // O(n)
         userCountries.forEach(userCountry => {
 
-          if (userCountry.userId !== user.id) { return; }
+          let condition = userCountry.userId !== user.id;
+          condition = condition || !indexes[userCountry.countryId];
+          if (condition) { return; }
 
           const data = indexes[userCountry.countryId];
           data.visited = userCountry.visited;
           data.hasVisa = userCountry.hasVisa;
+          data.userCountryId = userCountry.id;
 
         });
 
@@ -204,6 +209,47 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
   saveChanges() {
 
     console.log(this.searchResultForm.value);
+
+    this.searchResult.forEach((result, i) => {
+
+      console.log(result);
+      const newVisited = this.searchResultForm.controls.visited.value[i];
+      const newHasVisa = this.searchResultForm.controls.hasVisa.value[i];
+
+      let cond = newHasVisa === result.hasVisa;
+      cond = cond && newVisited === result.visited;
+
+      if (cond) { return; }
+
+      const userCountry = {
+        id: undefined,
+        userId: result.user.id,
+        countryId: result.country.id,
+        visited: newVisited,
+        hasVisa: newHasVisa,
+      };
+
+      if (result.userCountryId) {
+
+        console.log('update');
+        const data = {
+          ...userCountry,
+          id: result.userCountryId,
+        };
+        this.userCountriesService.updateUserCountry(data)
+        .pipe(untilDestroyed(this))
+        .subscribe();
+
+      } else {
+
+        console.log('create');
+        this.userCountriesService.addUserCountry(userCountry)
+        .pipe(untilDestroyed(this))
+        .subscribe();
+
+      }
+
+    });
 
   }
 
