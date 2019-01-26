@@ -1,53 +1,8 @@
 {
   "users": [
-    {
-      "id": 1,
-      "name": "first user"
-    },
-    {
-      "id": 2,
-      "name": "second user"
-    },
-    {
-      "id": 3,
-      "name": "third user"
-    }
   ],
   "countries": [
-    {
-      "id": 1,
-      "name": "first country"
-    },
-    {
-      "id": 2,
-      "name": "second country"
-    },
-    {
-      "id": 3,
-      "name": "third country"
-    }
   ],
   "user-countries": [
-    {
-      "id": 1,
-      "userId": 1,
-      "countryId": 1,
-      "visited": true,
-      "hasVisa": true
-    },
-    {
-      "id": 2,
-      "userId": 1,
-      "countryId": 2,
-      "visited": true,
-      "hasVisa": true
-    },
-    {
-      "id": 3,
-      "userId": 1,
-      "countryId": 3,
-      "visited": true,
-      "hasVisa": false
-    }
   ]
 }
