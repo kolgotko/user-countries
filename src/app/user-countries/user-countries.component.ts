@@ -33,6 +33,7 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
   searchResultForm: FormGroup;
   searchResults$: Observable<SearchResultInterface[]>;
   resultsLoading$: Observable<boolean>;
+  displayedColumns = ['user', 'country', 'visited', 'hasVisa'];
 
   readonly binOptions = {
     'any': new Set([true, false]),

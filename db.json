@@ -40,14 +40,14 @@
       "userId": 1,
       "countryId": 2,
       "visited": true,
-      "hasVisa": false
+      "hasVisa": true
     },
     {
       "id": 4,
       "userId": 1,
       "countryId": 3,
       "visited": true,
-      "hasVisa": false
+      "hasVisa": true
     },
     {
       "id": 5,
