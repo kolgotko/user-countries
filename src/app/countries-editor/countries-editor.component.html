@@ -5,6 +5,7 @@
   <ng-container *ngFor="let country of countries$ | async">
     <mat-list-item>
       <app-country-editor [country]="country"></app-country-editor>
+      &nbsp;
       <button mat-raised-button (click)="deleteCountry(country.id)" color="accent">delete</button>
     </mat-list-item>
     <mat-divider></mat-divider>
@@ -19,7 +20,7 @@
   <mat-form-field>
     <input type="text" formControlName="name" placeholder="Name" matInput />
   </mat-form-field>
-
+  &nbsp;
   <button mat-raised-button color="primary">create</button>
 
 </form>

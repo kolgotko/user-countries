@@ -47,7 +47,7 @@
       "userId": 1,
       "countryId": 3,
       "visited": true,
-      "hasVisa": true
+      "hasVisa": false
     }
   ]
 }

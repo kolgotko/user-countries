@@ -3,11 +3,13 @@
   <mat-form-field>
     <input type="text" [formControl]="nameFormControl" matInput />
   </mat-form-field>
+  &nbsp;
   <button mat-button color="primary" (click)="onSave()"> save </button>
+  &nbsp;
   <button mat-button color="accent" (click)="show=false"> cancel </button>
 
 </ng-container>
 <ng-template #info>
-  {{ country.name }}
+  {{ country.name }} &nbsp;
   <button mat-button color="primary" (click)="show=true"> edit </button>
 </ng-template>

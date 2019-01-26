@@ -5,25 +5,26 @@
   <ng-container *ngFor="let user of this.users$ | async">
     <mat-list-item>
       <app-user-editor [user]="user"></app-user-editor>
-      <button class="button" (click)="onDeleteUser(user.id)"
+      &nbsp;
+      <button (click)="onDeleteUser(user.id)"
         mat-raised-button color="accent">delete</button>
     </mat-list-item>
     <mat-divider></mat-divider>
   </ng-container>
 </mat-list>
 
-<form class="form-base" [formGroup]="newUserForm" (ngSubmit)="onSubmitNewUser()">
+<form [formGroup]="newUserForm" (ngSubmit)="onSubmitNewUser()">
 
   <mat-toolbar>
-    <h2 class="form-base__row form-base__title">New user</h2>
+    <h2>New user</h2>
   </mat-toolbar>
 
   <mat-form-field>
-    <input class="form-base__input" matInput placeholder="Name" type="text"
+    <input matInput placeholder="Name" type="text"
       formControlName="name" />
   </mat-form-field>
-
-  <button class="button" mat-raised-button color="primary">create</button>
+  &nbsp;
+  <button mat-raised-button color="primary">create</button>
 
 </form>
 
