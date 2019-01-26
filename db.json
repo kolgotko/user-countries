@@ -11,6 +11,18 @@
     {
       "id": 3,
       "name": "third user"
+    },
+    {
+      "name": "131313",
+      "id": 4
+    },
+    {
+      "name": "13131",
+      "id": 5
+    },
+    {
+      "name": "123123",
+      "id": 6
     }
   ],
   "countries": [
@@ -25,6 +37,14 @@
     {
       "id": 3,
       "name": "third country"
+    },
+    {
+      "name": "11111",
+      "id": 4
+    },
+    {
+      "name": "111111",
+      "id": 5
     }
   ],
   "user-countries": [
@@ -39,8 +59,8 @@
       "id": 3,
       "userId": 1,
       "countryId": 2,
-      "visited": true,
-      "hasVisa": true
+      "visited": false,
+      "hasVisa": false
     },
     {
       "id": 4,

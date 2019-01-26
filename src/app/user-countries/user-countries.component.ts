@@ -310,6 +310,10 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+
+    this.searchService.clearResults();
+
+  }
 
 }

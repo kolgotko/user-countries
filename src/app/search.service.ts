@@ -17,4 +17,11 @@ export class SearchService {
 
   }
 
+  clearResults() {
+
+    this.searchResultsStore.set([]);
+    this.searchResultsStore.setLoading(true);
+
+  }
+
 }
