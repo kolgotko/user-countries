@@ -11,7 +11,7 @@ import { CountriesQuery } from '../countries.query';
 import { UserCountriesService } from '../user-countries.service';
 import { UserCountriesQuery } from '../user-countries.query';
 import { UserCountryInterface } from '../interfaces/user-coutry.interface';
-import { SearchResultInterface } from '../interfaces/search-result.interface';
+import { SearchResult, createSearchResult } from '../models/search-result.model';
 import { Observable, of, from, combineLatest, zip  } from 'rxjs';
 import { switchMap, map, pluck, tap, first } from 'rxjs/operators';
 
@@ -29,9 +29,9 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
   countries$: Observable<CountryInterface[]>;
   userCountries$: Observable<UserCountryInterface[]>;
   searchForm: FormGroup;
-  searchResult: SearchResultInterface[] = [];
+  searchResult: SearchResult[] = [];
   searchResultForm: FormGroup;
-  searchResults$: Observable<SearchResultInterface[]>;
+  searchResults$: Observable<SearchResult[]>;
   resultsLoading$: Observable<boolean>;
   displayedColumns = ['user', 'country', 'visited', 'hasVisa'];
 
@@ -196,13 +196,10 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
         const indexes = {};
         const forAllCountries = countries.map(country => {
 
-          const ret = {
+          const ret = createSearchResult({
             country,
             user,
-            visited: false,
-            hasVisa: false,
-            userCountryId: 0,
-          };
+          });
 
           indexes[country.id] = ret;
           return ret;
@@ -223,13 +220,15 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
 
         });
 
+        console.log(forAllCountries);
+
         this.searchService.setResults(forAllCountries);
 
       });
 
   }
 
-  private getChangedResults<T extends SearchResultInterface>(results: T[]): T[] {
+  private getChangedResults<T extends SearchResult>(results: T[]): T[] {
 
     const { visited, hasVisa } = this.searchResultForm.value;
 
@@ -243,7 +242,7 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
 
   }
 
-  private applyChanges<T extends SearchResultInterface>(results: T[]): T[] {
+  private applyChanges<T extends SearchResult>(results: T[]): T[] {
 
     const { visited, hasVisa } = this.searchResultForm.value;
 
@@ -259,7 +258,7 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
 
   }
 
-  private toUserCountries(items: SearchResultInterface[]): UserCountryInterface[] {
+  private toUserCountries(items: SearchResult[]): UserCountryInterface[] {
 
     return items.map(item => {
       return {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SearchResultsStore } from './search-results.store';
-import { SearchResultInterface } from './interfaces/search-result.interface';
+import { SearchResult } from './models/search-result.model';
 import { SearchResultsQuery } from './search-results.query';
 
 @Injectable({ providedIn: 'root' })
@@ -11,7 +11,7 @@ export class SearchService {
     private searchResultsQuery: SearchResultsQuery,
   ) { }
 
-  setResults(results: SearchResultInterface[]) {
+  setResults(results: SearchResult[]) {
 
     this.searchResultsStore.set(results);
 

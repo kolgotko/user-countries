@@ -11,18 +11,6 @@
     {
       "id": 3,
       "name": "third user"
-    },
-    {
-      "name": "131313",
-      "id": 4
-    },
-    {
-      "name": "13131",
-      "id": 5
-    },
-    {
-      "name": "123123",
-      "id": 6
     }
   ],
   "countries": [
@@ -37,51 +25,29 @@
     {
       "id": 3,
       "name": "third country"
-    },
-    {
-      "name": "11111",
-      "id": 4
-    },
-    {
-      "name": "111111",
-      "id": 5
     }
   ],
   "user-countries": [
     {
-      "id": 2,
+      "id": 1,
       "userId": 1,
       "countryId": 1,
       "visited": true,
-      "hasVisa": false
+      "hasVisa": true
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "countryId": 2,
+      "visited": true,
+      "hasVisa": true
     },
     {
       "id": 3,
       "userId": 1,
-      "countryId": 2,
-      "visited": false,
-      "hasVisa": false
-    },
-    {
-      "id": 4,
-      "userId": 1,
       "countryId": 3,
       "visited": true,
       "hasVisa": true
-    },
-    {
-      "id": 5,
-      "userId": 2,
-      "countryId": 1,
-      "visited": true,
-      "hasVisa": true
-    },
-    {
-      "id": 6,
-      "userId": 2,
-      "countryId": 3,
-      "visited": false,
-      "hasVisa": false
     }
   ]
 }

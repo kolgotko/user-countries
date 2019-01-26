@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { QueryEntity } from '@datorama/akita';
 import { SearchResultsState, SearchResultsStore } from './search-results.store';
-import { SearchResultInterface } from './interfaces/search-result.interface';
+import { SearchResult } from './models/search-result.model';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -9,7 +9,7 @@ import { switchMap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class SearchResultsQuery extends
-  QueryEntity<SearchResultsState, SearchResultInterface> {
+  QueryEntity<SearchResultsState, SearchResult> {
 
   results$ = this.selectAll();
   loading$ = this.selectLoading();

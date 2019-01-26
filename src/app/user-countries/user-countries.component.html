@@ -45,7 +45,7 @@
   </mat-autocomplete>
 </form>
 
-<ng-container *ngIf="!(resultsLoading$ | async) && (searchResults$ | async)">
+<ng-container *ngIf="!(resultsLoading$ | async) && searchResultForm">
 
   <mat-toolbar>
     <h2>Search results</h2>
