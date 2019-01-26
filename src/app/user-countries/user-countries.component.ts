@@ -86,26 +86,52 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
   initSearchResultForm() {
 
     this.searchResults$.pipe(
+      map(results => this.createFormForResults(results)),
+      tap(form => this.searchResultForm = form),
+      switchMap(form => combineLatest(form.valueChanges, this.searchResults$)),
       untilDestroyed(this)
-    ).subscribe(results => {
+    ).subscribe(([formValue, results]) => {
 
-      const visitedFormArray = this.fb.array([]);
-      const hasVisaFormArray = this.fb.array([]);
+      const { visited, hasVisa } = formValue;
 
-      results.forEach(item => {
+      results.forEach((result, i) => {
 
-        visitedFormArray.push(this.fb.control(item.visited));
-        hasVisaFormArray.push(this.fb.control(item.hasVisa));
+        let dirty = result.visited !== visited[i];
+        dirty = dirty || result.hasVisa !== hasVisa[i];
 
-      });
+        if (dirty) {
 
-      this.searchResultForm = this.fb.group({
-        visited: visitedFormArray,
-        hasVisa: hasVisaFormArray,
+          this.searchService.updateResult({
+            ...result,
+            visited: visited[i],
+            hasVisa: hasVisa[i],
+            dirty: true,
+          });
+
+        }
+
       });
 
     });
 
+  }
+
+  private createFormForResults(results: SearchResult[]): FormGroup {
+
+    const visitedFormArray = this.fb.array([]);
+    const hasVisaFormArray = this.fb.array([]);
+
+    results.forEach(item => {
+
+      visitedFormArray.push(this.fb.control(item.visited));
+      hasVisaFormArray.push(this.fb.control(item.hasVisa));
+
+    });
+
+    return this.fb.group({
+      visited: visitedFormArray,
+      hasVisa: hasVisaFormArray,
+    });
   }
 
   initFilterForResults() {
@@ -220,8 +246,6 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
 
         });
 
-        console.log(forAllCountries);
-
         this.searchService.setResults(forAllCountries);
 
       });
@@ -230,15 +254,7 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
 
   private getChangedResults<T extends SearchResult>(results: T[]): T[] {
 
-    const { visited, hasVisa } = this.searchResultForm.value;
-
-    return results.filter((result, i) => {
-
-      let cond = hasVisa[i] !== result.hasVisa;
-      cond = cond || visited[i] !== result.visited;
-      return cond;
-
-    });
+    return results.filter(result => result.dirty);
 
   }
 
@@ -278,7 +294,6 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
       .pipe(
         first(),
         map(results => this.getChangedResults(results)),
-        map(results => this.applyChanges(results)),
         map(changes => this.toUserCountries(changes)),
         switchMap(userCountries => {
 

@@ -9,6 +9,7 @@ export interface SearchResult {
   user: UserInterface;
   visited: boolean;
   hasVisa: boolean;
+  dirty: boolean;
 }
 
 export function createSearchResult(data: Partial<SearchResult>) {
@@ -18,6 +19,7 @@ export function createSearchResult(data: Partial<SearchResult>) {
     userCountryId: 0,
     visited: false,
     hasVisa: false,
+    dirty: false,
     ...data,
   } as SearchResult;
 

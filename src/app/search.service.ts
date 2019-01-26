@@ -24,4 +24,10 @@ export class SearchService {
 
   }
 
+  updateResult(result: SearchResult) {
+
+    this.searchResultsStore.update(result.id, result);
+
+  }
+
 }
