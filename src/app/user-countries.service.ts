@@ -57,6 +57,17 @@ export class UserCountriesService {
 
   }
 
+  upsertUserCountry(data: UserCountryInterface): Observable<any> {
+
+    if (data.id) {
+      return this.updateUserCountry(data);
+    } else {
+      delete(data.id);
+      return this.addUserCountry(data);
+    }
+
+  }
+
   getAllUserCountries(): Observable<UserCountryInterface[]> {
 
     return this.http.get<UserCountryInterface[]>(this.url);

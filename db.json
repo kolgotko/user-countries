@@ -33,14 +33,14 @@
       "userId": 1,
       "countryId": 1,
       "visited": true,
-      "hasVisa": true
+      "hasVisa": false
     },
     {
       "id": 3,
       "userId": 1,
       "countryId": 2,
       "visited": true,
-      "hasVisa": true
+      "hasVisa": false
     },
     {
       "id": 4,

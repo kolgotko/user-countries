@@ -45,33 +45,37 @@
   </mat-autocomplete>
 </form>
 
-<mat-toolbar>
-  <h2>Search results</h2>
-</mat-toolbar>
+<ng-container *ngIf="!(resultsLoading$ | async) && (searchResults$ | async)">
 
-<form [formGroup]="searchResultForm" (ngSubmit)="saveChanges()">
+  <mat-toolbar>
+    <h2>Search results</h2>
+  </mat-toolbar>
 
-  <table>
+  <form [formGroup]="searchResultForm" (ngSubmit)="saveChanges()">
 
-    <tr>
-      <th>User</th>
-      <th>Country</th>
-      <th>Visit</th>
-      <th>Has visa</th>
-    </tr>
+    <table>
 
-    <tr *ngFor="let row of searchResult; let i=index" >
-      <td>{{ row.user.name }}</td>
-      <td>{{ row.country.name }}</td>
-      <td formArrayName="visited">
-        <mat-checkbox [formControlName]="i"></mat-checkbox>
-      </td>
-      <td formArrayName="hasVisa">
-        <mat-checkbox [formControlName]="i"></mat-checkbox>
-      </td>
-    </tr>
+      <tr>
+        <th>User</th>
+        <th>Country</th>
+        <th>Visit</th>
+        <th>Has visa</th>
+      </tr>
 
-  </table>
+      <tr *ngFor="let row of (searchResults$ | async); let i=index" >
+        <td>{{ row.user.name }}</td>
+        <td>{{ row.country.name }}</td>
+        <td formArrayName="visited">
+          <mat-checkbox [formControlName]="i"></mat-checkbox>
+        </td>
+        <td formArrayName="hasVisa">
+          <mat-checkbox [formControlName]="i"></mat-checkbox>
+        </td>
+      </tr>
 
-  <button mat-raised-button color="primary">save</button>
-</form>
+    </table>
+
+    <button mat-raised-button color="primary">save</button>
+  </form>
+
+</ng-container>

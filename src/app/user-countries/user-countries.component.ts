@@ -12,8 +12,11 @@ import { UserCountriesService } from '../user-countries.service';
 import { UserCountriesQuery } from '../user-countries.query';
 import { UserCountryInterface } from '../interfaces/user-coutry.interface';
 import { SearchResultInterface } from '../interfaces/search-result.interface';
-import { Observable, of, combineLatest  } from 'rxjs';
-import { switchMap, map, pluck } from 'rxjs/operators';
+import { Observable, of, from, combineLatest, zip  } from 'rxjs';
+import { switchMap, map, pluck, tap, first } from 'rxjs/operators';
+
+import { SearchResultsQuery } from '../search-results.query';
+import { SearchService } from '../search.service';
 
 @Component({
   selector: 'app-user-countries',
@@ -28,6 +31,8 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   searchResult: SearchResultInterface[] = [];
   searchResultForm: FormGroup;
+  searchResults$: Observable<SearchResultInterface[]>;
+  resultsLoading$: Observable<boolean>;
 
   readonly binOptions = {
     'any': new Set([true, false]),
@@ -44,18 +49,25 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
     private countriesQuery: CountriesQuery,
     private userCountriesService: UserCountriesService,
     private userCountriesQuery: UserCountriesQuery,
+    private searchResultsQuery: SearchResultsQuery,
+    private searchService: SearchService,
   ) { }
 
   ngOnInit() {
 
-    this.initSearchForm();
-    this.initSearchResultForm();
     this.loadCountries();
     this.loadUsers();
     this.loadUserCoutries();
+
     this.users$ = this.usersQuery.users$;
     this.countries$ = this.countriesQuery.countries$;
     this.userCountries$ = this.userCountriesQuery.userCountries$;
+    this.searchResults$ = this.searchResultsQuery.results$;
+    this.resultsLoading$ = this.searchResultsQuery.loading$;
+
+    this.initSearchForm();
+    this.initFilterForResults();
+    this.initSearchResultForm();
 
   }
 
@@ -72,10 +84,54 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
 
   initSearchResultForm() {
 
-    this.searchResultForm = this.fb.group({
-      visited: this.fb.array([]),
-      hasVisa: this.fb.array([]),
+    this.searchResults$.pipe(
+      untilDestroyed(this)
+    ).subscribe(results => {
+
+      const visitedFormArray = this.fb.array([]);
+      const hasVisaFormArray = this.fb.array([]);
+
+      results.forEach(item => {
+
+        visitedFormArray.push(this.fb.control(item.visited));
+        hasVisaFormArray.push(this.fb.control(item.hasVisa));
+
+      });
+
+      this.searchResultForm = this.fb.group({
+        visited: visitedFormArray,
+        hasVisa: hasVisaFormArray,
+      });
+
     });
+
+  }
+
+  initFilterForResults() {
+
+    this.searchResults$ = this.searchResults$.pipe(
+      map(results => {
+
+        const formValue = this.searchForm.value;
+
+        return results.filter(item => {
+
+          let ret = true;
+
+          if (formValue.countryName.length) {
+
+            ret = item.country.name === formValue.countryName;
+
+          }
+
+          ret = ret && formValue.visited.has(item.visited);
+          ret = ret && formValue.hasVisa.has(item.hasVisa);
+
+          return ret;
+
+        });
+      })
+    );
 
   }
 
@@ -123,11 +179,9 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
 
   onSubmitSearchForm() {
 
-    console.log(this.searchForm.value);
     if (this.searchForm.invalid) { return; }
 
     const formValue = this.searchForm.value;
-
     const user$ = this.usersQuery.getUserByName(formValue.userName);
     const countries$ = this.countriesQuery.selectAll();
     const users$ = this.usersQuery.selectAll();
@@ -168,88 +222,90 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
 
         });
 
-        const result = forAllCountries.filter(item => {
-
-          let ret = true;
-
-          if (formValue.countryName.length) {
-
-            ret = item.country.name === formValue.countryName;
-
-          }
-
-          ret = ret && formValue.visited.has(item.visited);
-          ret = ret && formValue.hasVisa.has(item.hasVisa);
-
-          return ret;
-
-        });
-
-        const visitedFormArray = this.fb.array([]);
-        const hasVisaFormArray = this.fb.array([]);
-
-        result.forEach(item => {
-
-          visitedFormArray.push(this.fb.control(item.visited));
-          hasVisaFormArray.push(this.fb.control(item.hasVisa));
-
-        });
-
-        this.searchResultForm.setControl('visited', visitedFormArray);
-        this.searchResultForm.setControl('hasVisa', hasVisaFormArray);
-
-        console.log(this.searchResultForm.value);
-
-        this.searchResult = result;
+        this.searchService.setResults(forAllCountries);
 
       });
 
   }
 
-  saveChanges() {
+  private getChangedResults<T extends SearchResultInterface>(results: T[]): T[] {
 
-    console.log(this.searchResultForm.value);
+    const { visited, hasVisa } = this.searchResultForm.value;
 
-    this.searchResult.forEach((result, i) => {
+    return results.filter((result, i) => {
 
-      console.log(result);
-      const newVisited = this.searchResultForm.controls.visited.value[i];
-      const newHasVisa = this.searchResultForm.controls.hasVisa.value[i];
-
-      let cond = newHasVisa === result.hasVisa;
-      cond = cond && newVisited === result.visited;
-
-      if (cond) { return; }
-
-      const userCountry = {
-        id: undefined,
-        userId: result.user.id,
-        countryId: result.country.id,
-        visited: newVisited,
-        hasVisa: newHasVisa,
-      };
-
-      if (result.userCountryId) {
-
-        console.log('update');
-        const data = {
-          ...userCountry,
-          id: result.userCountryId,
-        };
-        this.userCountriesService.updateUserCountry(data)
-        .pipe(untilDestroyed(this))
-        .subscribe();
-
-      } else {
-
-        console.log('create');
-        this.userCountriesService.addUserCountry(userCountry)
-        .pipe(untilDestroyed(this))
-        .subscribe();
-
-      }
+      let cond = hasVisa[i] !== result.hasVisa;
+      cond = cond || visited[i] !== result.visited;
+      return cond;
 
     });
+
+  }
+
+  private applyChanges<T extends SearchResultInterface>(results: T[]): T[] {
+
+    const { visited, hasVisa } = this.searchResultForm.value;
+
+    return results.map((result, i) => {
+
+      return {
+        ...result,
+        visited: visited[i],
+        hasVisa: hasVisa[i],
+      };
+
+    });
+
+  }
+
+  private toUserCountries(items: SearchResultInterface[]): UserCountryInterface[] {
+
+    return items.map(item => {
+      return {
+        id: item.userCountryId,
+        userId: item.user.id,
+        countryId: item.country.id,
+        visited: item.visited,
+        hasVisa: item.hasVisa,
+      };
+    });
+
+  }
+
+  saveChanges() {
+
+    this.searchResults$
+      .pipe(
+        first(),
+        map(results => this.getChangedResults(results)),
+        map(results => this.applyChanges(results)),
+        map(changes => this.toUserCountries(changes)),
+        switchMap(userCountries => {
+
+          const requests = userCountries.map(data => {
+            return this.userCountriesService.upsertUserCountry(data);
+          });
+
+          return zip(...requests);
+
+        }),
+        untilDestroyed(this)
+      )
+      .subscribe(_ => {
+
+        this.snackBar.open(
+          `Data saved!`,
+          null,
+          { duration: 3000 }
+        );
+
+      }, error => {
+        this.snackBar.open(
+          `Error saving. Details: ${error.message}`,
+          null,
+          { duration: 3000 }
+        );
+      });
 
   }
 
