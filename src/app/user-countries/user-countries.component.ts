@@ -252,28 +252,6 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
 
   }
 
-  private getChangedResults<T extends SearchResult>(results: T[]): T[] {
-
-    return results.filter(result => result.dirty);
-
-  }
-
-  private applyChanges<T extends SearchResult>(results: T[]): T[] {
-
-    const { visited, hasVisa } = this.searchResultForm.value;
-
-    return results.map((result, i) => {
-
-      return {
-        ...result,
-        visited: visited[i],
-        hasVisa: hasVisa[i],
-      };
-
-    });
-
-  }
-
   private toUserCountries(items: SearchResult[]): UserCountryInterface[] {
 
     return items.map(item => {
@@ -290,37 +268,35 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
 
   saveChanges() {
 
-    this.searchResults$
-      .pipe(
-        first(),
-        map(results => this.getChangedResults(results)),
-        map(changes => this.toUserCountries(changes)),
-        switchMap(userCountries => {
+    this.searchResults$.pipe(
+      first(),
+      map(results => results.filter(result => result.dirty)),
+      map(changes => this.toUserCountries(changes)),
+      switchMap(userCountries => {
 
-          const requests = userCountries.map(data => {
-            return this.userCountriesService.upsertUserCountry(data);
-          });
+        const requests = userCountries.map(data => {
+          return this.userCountriesService.upsertUserCountry(data);
+        });
 
-          return zip(...requests);
+        return zip(...requests);
 
-        }),
-        untilDestroyed(this)
-      )
-      .subscribe(_ => {
+      }),
+      untilDestroyed(this)
+    ).subscribe(_ => {
 
-        this.snackBar.open(
-          `Data saved!`,
-          null,
-          { duration: 3000 }
-        );
+      this.snackBar.open(
+        `Data saved!`,
+        null,
+        { duration: 3000 }
+      );
 
-      }, error => {
-        this.snackBar.open(
-          `Error saving. Details: ${error.message}`,
-          null,
-          { duration: 3000 }
-        );
-      });
+    }, error => {
+      this.snackBar.open(
+        `Error saving. Details: ${error.message}`,
+        null,
+        { duration: 3000 }
+      );
+    });
 
   }
 
