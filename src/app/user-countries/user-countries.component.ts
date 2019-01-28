@@ -34,6 +34,7 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
   searchResults$: Observable<SearchResult[]>;
   resultsLoading$: Observable<boolean>;
   displayedColumns = ['user', 'country', 'visited', 'hasVisa'];
+  isLockedResultsForm = false;
 
   readonly binOptions = {
     'any': new Set([true, false]),
@@ -274,6 +275,9 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
 
   saveChanges() {
 
+    if (this.isLockedResultsForm) { return; }
+    this.isLockedResultsForm = true;
+
     this.searchResults$.pipe(
       first(),
       map(results => results.filter(result => result.dirty)),
@@ -287,6 +291,7 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
         return zip(...requests);
 
       }),
+      finalize(() => this.isLockedResultsForm = false),
       untilDestroyed(this)
     ).subscribe(_ => {
 

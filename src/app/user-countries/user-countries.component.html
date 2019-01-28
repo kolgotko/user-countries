@@ -82,7 +82,7 @@
       <tr class="table__row" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
     <br/>
-    <button mat-raised-button color="primary">save</button>
+    <button mat-raised-button color="primary" [disabled]="isLockedResultsForm">save</button>
   </form>
 
 </ng-container>
