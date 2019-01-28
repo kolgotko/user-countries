@@ -290,6 +290,8 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
       untilDestroyed(this)
     ).subscribe(_ => {
 
+      this.searchService.clearDirty();
+
       this.snackBar.open(
         `Data saved!`,
         null,

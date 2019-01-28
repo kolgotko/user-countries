@@ -24,6 +24,12 @@ export class SearchService {
 
   }
 
+  clearDirty() {
+
+    this.searchResultsStore.update(null, { dirty: false });
+
+  }
+
   updateResult(result: SearchResult) {
 
     this.searchResultsStore.update(result.id, result);
