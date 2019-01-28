@@ -13,7 +13,7 @@ import { UserCountriesQuery } from '../user-countries.query';
 import { UserCountryInterface } from '../interfaces/user-coutry.interface';
 import { SearchResult, createSearchResult } from '../models/search-result.model';
 import { Observable, of, from, combineLatest, zip  } from 'rxjs';
-import { switchMap, map, pluck, tap, first } from 'rxjs/operators';
+import { switchMap, map, pluck, tap, first, finalize } from 'rxjs/operators';
 
 import { SearchResultsQuery } from '../search-results.query';
 import { SearchService } from '../search.service';
@@ -209,46 +209,52 @@ export class UserCountriesComponent implements OnInit, OnDestroy {
     if (this.searchForm.invalid) { return; }
 
     const formValue = this.searchForm.value;
-    const user$ = this.usersQuery.getUserByName(formValue.userName);
-    const countries$ = this.countriesQuery.selectAll();
-    const users$ = this.usersQuery.selectAll();
-    const userCountries$ = this.userCountriesQuery.selectAll();
+    const user = this.usersQuery.getUserByName(formValue.userName);
+    const countries = this.countriesQuery.getAll();
+    const users = this.usersQuery.getAll();
+    const userCountries = this.userCountriesQuery.getAll();
 
-    combineLatest(user$, userCountries$, users$, countries$)
-      .pipe(untilDestroyed(this))
-      .subscribe(([user, userCountries, users, countries]) => {
+    if (!user) {
 
-        // O(n)
-        const indexes = {};
-        const forAllCountries = countries.map(country => {
+      this.snackBar.open(
+        `user not found`,
+        null,
+        { duration: 3000 }
+      );
 
-          const ret = createSearchResult({
-            country,
-            user,
-          });
+      return;
 
-          indexes[country.id] = ret;
-          return ret;
+    }
 
-        });
+    // O(n)
+    const indexes = {};
+    const forAllCountries = countries.map(country => {
 
-        // O(n)
-        userCountries.forEach(userCountry => {
-
-          let condition = userCountry.userId !== user.id;
-          condition = condition || !indexes[userCountry.countryId];
-          if (condition) { return; }
-
-          const data = indexes[userCountry.countryId];
-          data.visited = userCountry.visited;
-          data.hasVisa = userCountry.hasVisa;
-          data.userCountryId = userCountry.id;
-
-        });
-
-        this.searchService.setResults(forAllCountries);
-
+      const ret = createSearchResult({
+        country,
+        user,
       });
+
+      indexes[country.id] = ret;
+      return ret;
+
+    });
+
+    // O(n)
+    userCountries.forEach(userCountry => {
+
+      let condition = userCountry.userId !== user.id;
+      condition = condition || !indexes[userCountry.countryId];
+      if (condition) { return; }
+
+      const data = indexes[userCountry.countryId];
+      data.visited = userCountry.visited;
+      data.hasVisa = userCountry.hasVisa;
+      data.userCountryId = userCountry.id;
+
+    });
+
+    this.searchService.setResults(forAllCountries);
 
   }
 

@@ -16,13 +16,21 @@ export class UsersQuery extends QueryEntity<UsersState, UserInterface> {
     super(store);
   }
 
-  getUserByName(name: string): Observable<UserInterface> {
+  selectUserByName(name: string): Observable<UserInterface> {
 
     return this.selectAll({
       filterBy: user => user.name === name
     }).pipe(
       switchMap(users => of(users[0]))
     );
+
+  }
+
+  getUserByName(name: string) {
+
+    return this.getAll({
+      filterBy: user => user.name === name
+    })[0];
 
   }
 }
